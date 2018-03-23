@@ -21,12 +21,7 @@ int main(int argc, char** argv)
 
 	osg::ArgumentParser arguments(&argc, argv);
 	arguments.getApplicationUsage()->setApplicationName(arguments.getApplicationName());
-	arguments.getApplicationUsage()->setDescription("description!!!aaaaaaaaaaaaa");
-	arguments.getApplicationUsage()->setDescription("bbbbbbbbbbbbb");
-/*
-	arguments.getApplicationUsage()->setCommandLineUsage("command line usage bbbbbbbbbbbbbb");
-	arguments.getApplicationUsage()->addCommandLineOption("cccccccccccccc", "ddddddddddd");
-	arguments.getApplicationUsage()->addCommandLineOption("eeeeeeeeee", "fffffffffff");*/
+	arguments.getApplicationUsage()->setDescription("description!!!");
 	arguments.getApplicationUsage()->addCommandLineOption("--image <filename>", "Load an image and render it on a quad");
 	arguments.getApplicationUsage()->addCommandLineOption("--dem <filename>", "Load an image/DEM and render it on a HeightField");
 	arguments.getApplicationUsage()->addCommandLineOption("-h or --help", "Display command line parameters");
