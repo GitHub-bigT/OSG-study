@@ -6,7 +6,7 @@ ViewerWidget::ViewerWidget(osg::Node *scene, osgQt::GraphicsWindowQt *gw_share) 
 	setThreadingModel(osgViewer::ViewerBase::SingleThreaded);
 
 	// disable the default setting of viewer.done() by pressing Escape.
-	setKeyEventSetsDone(1);
+	//setKeyEventSetsDone(1);
 
 	QWidget* widget = addViewWidget(createGraphicsWindow(0, 0, 300, 100, gw_share), scene);
 
@@ -60,6 +60,5 @@ osgQt::GraphicsWindowQt* ViewerWidget::createGraphicsWindow(int x, int y, int w,
 	traits->samples = ds->getNumMultiSamples();
 	traits->sharedContext = gw_share;
 	gw = new osgQt::GraphicsWindowQt(traits.get());
-
 	return gw;
 }

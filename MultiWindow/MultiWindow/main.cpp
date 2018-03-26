@@ -1,16 +1,16 @@
 #include "ViewerWidget.h"
 
+const std::string osgModelPath = "D://Code//practise//OSGPractise//Resource//";
+
 int main(int argc, char** argv)
 {
-	std::string osgModelPath = "D://Code//practise//OSGPractise//Resource//";
-	osg::Node *scene = osgDB::readNodeFile(osgModelPath + "cow.osgt");
 	QApplication app(argc, argv);
+	osg::Node *scene = osgDB::readNodeFile(osgModelPath + "cow.osgt");
 	osgQt::GraphicsWindowQt *stageGw = NULL;
 	ViewerWidget* stageWidget = new ViewerWidget(scene);
 	stageGw = stageWidget->gw;
 	stageWidget->setGeometry(100, 100, 800, 600);
 	stageWidget->show();
-
 	for (int i = 1; i < 5; i++)
 	{
 		ViewerWidget* viewWidget = new ViewerWidget(scene, stageGw);
