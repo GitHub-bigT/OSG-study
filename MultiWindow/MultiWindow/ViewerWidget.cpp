@@ -1,25 +1,17 @@
 #include "ViewerWidget.h"
 
-ViewerWidget::ViewerWidget() : QWidget(0, 0)
+//Qt::FramelessWindowHint
+ViewerWidget::ViewerWidget(osg::Node *scene, osgQt::GraphicsWindowQt *gw_share) : QWidget(0, 0)
 {
-	osgModelPath = "D://Code//practise//OSGPractise//Resource//";
 	setThreadingModel(osgViewer::ViewerBase::SingleThreaded);
 
 	// disable the default setting of viewer.done() by pressing Escape.
-	setKeyEventSetsDone(0);
+	setKeyEventSetsDone(1);
 
-	QWidget* widget1 = addViewWidget(createGraphicsWindow(0, 0, 300, 100), osgDB::readNodeFile(osgModelPath + "cow.osgt"));
-	QWidget* widget2 = addViewWidget(createGraphicsWindow(0, 0, 100, 100), osgDB::readNodeFile(osgModelPath + "cow.osgt"));
-	QWidget* widget3 = addViewWidget(createGraphicsWindow(0, 0, 100, 100), osgDB::readNodeFile(osgModelPath + "cow.osgt"));
-	QWidget* widget4 = addViewWidget(createGraphicsWindow(0, 0, 100, 100), osgDB::readNodeFile(osgModelPath + "cow.osgt"));
-	QWidget* popupWidget = addViewWidget(createGraphicsWindow(900, 100, 320, 240, "Popup window", true), osgDB::readNodeFile(osgModelPath + "cow.osgt"));
-	popupWidget->show();
+	QWidget* widget = addViewWidget(createGraphicsWindow(0, 0, 300, 100, gw_share), scene);
 
 	QGridLayout* grid = new QGridLayout;
-	grid->addWidget(widget1, 0, 0);
-	grid->addWidget(widget2, 0, 1);
-	grid->addWidget(widget3, 1, 0);
-	grid->addWidget(widget4, 1, 1);
+	grid->addWidget(widget, 0, 0);
 	setLayout(grid);
 
 	connect(&_timer, SIGNAL(timeout()), this, SLOT(update()));
@@ -39,7 +31,8 @@ QWidget* ViewerWidget::addViewWidget(osgQt::GraphicsWindowQt *gw, osg::Node *sce
 	camera->setGraphicsContext(gw);
 
 	const osg::GraphicsContext::Traits *traits = gw->getTraits();
-	camera->setClearColor(osg::Vec4(1.0f, 1.0f, 0.0f, 1.0f));
+	
+	camera->setClearColor(osg::Vec4(0.2, 0.2, 0.6, 1.0));
 	camera->setViewport(new osg::Viewport(0, 0, traits->width, traits->height));
 	camera->setProjectionMatrixAsPerspective(30.0f, static_cast<double>(traits->width) / static_cast<double>(traits->height), 1.0f, 1000.0f);
 	
@@ -50,7 +43,7 @@ QWidget* ViewerWidget::addViewWidget(osgQt::GraphicsWindowQt *gw, osg::Node *sce
 	return gw->getGLWidget();
 }
 
-osgQt::GraphicsWindowQt* ViewerWidget::createGraphicsWindow(int x, int y, int w, int h, const std::string& name, bool windowDecoration)
+osgQt::GraphicsWindowQt* ViewerWidget::createGraphicsWindow(int x, int y, int w, int h, osgQt::GraphicsWindowQt *gw_share, const std::string& name, bool windowDecoration)
 {
 	osg::DisplaySettings *ds = osg::DisplaySettings::instance().get();
 	osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
@@ -65,6 +58,8 @@ osgQt::GraphicsWindowQt* ViewerWidget::createGraphicsWindow(int x, int y, int w,
 	traits->stencil = ds->getMinimumNumStencilBits();
 	traits->sampleBuffers = ds->getMultiSamples();
 	traits->samples = ds->getNumMultiSamples();
+	traits->sharedContext = gw_share;
+	gw = new osgQt::GraphicsWindowQt(traits.get());
 
-	return new osgQt::GraphicsWindowQt(traits.get());
+	return gw;
 }

@@ -13,14 +13,14 @@
 class ViewerWidget : public QWidget, public osgViewer::CompositeViewer
 {
 public:
-	ViewerWidget();
+	osgQt::GraphicsWindowQt *gw;
+	ViewerWidget(osg::Node *scene, osgQt::GraphicsWindowQt *gw_share= NULL);
 
 	~ViewerWidget();
 
 private:
-	std::string osgModelPath;
 	QWidget* addViewWidget(osgQt::GraphicsWindowQt *gw, osg::Node *scene);
-	osgQt::GraphicsWindowQt* createGraphicsWindow(int x, int y, int w, int h, const std::string& name = "", bool windowDecoration = false);
+	osgQt::GraphicsWindowQt* createGraphicsWindow(int x, int y, int w, int h, osgQt::GraphicsWindowQt *gw_share, const std::string& name = "aaa", bool windowDecoration = false);
 	virtual void paintEvent(QPaintEvent* event)
 	{
 		frame();
