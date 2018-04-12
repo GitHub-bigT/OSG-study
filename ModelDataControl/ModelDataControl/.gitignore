@@ -1,8 +1,0 @@
-*.opensdf
-*.opendb
-*.sdf
-*.db
-Debug
-.vs
-x64
-*.path

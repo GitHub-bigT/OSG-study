@@ -28,10 +28,10 @@ QWidget* ViewerWidget::addViewWidget(osgQt::GraphicsWindowQt *gw, osg::Node *sce
 	osgViewer::View *view = new osgViewer::View;
 	addView(view);
 	osg::Camera *camera = view->getCamera();
+	const osg::GraphicsContext::Traits *traits = gw->getTraits();
+
 	camera->setGraphicsContext(gw);
 
-	const osg::GraphicsContext::Traits *traits = gw->getTraits();
-	
 	camera->setClearColor(osg::Vec4(0.2, 0.2, 0.6, 1.0));
 	camera->setViewport(new osg::Viewport(0, 0, traits->width, traits->height));
 	camera->setProjectionMatrixAsPerspective(30.0f, static_cast<double>(traits->width) / static_cast<double>(traits->height), 1.0f, 1000.0f);
@@ -47,6 +47,8 @@ osgQt::GraphicsWindowQt* ViewerWidget::createGraphicsWindow(int x, int y, int w,
 {
 	osg::DisplaySettings *ds = osg::DisplaySettings::instance().get();
 	osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
+	//osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(traits.get());
+
 	traits->windowName = name;
 	traits->windowDecoration = windowDecoration;
 	traits->x = x;
@@ -59,6 +61,7 @@ osgQt::GraphicsWindowQt* ViewerWidget::createGraphicsWindow(int x, int y, int w,
 	traits->sampleBuffers = ds->getMultiSamples();
 	traits->samples = ds->getNumMultiSamples();
 	traits->sharedContext = gw_share;
+
 	gw = new osgQt::GraphicsWindowQt(traits.get());
 	return gw;
 }
