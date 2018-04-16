@@ -12,7 +12,7 @@ int main(int argc, char** argv)
 {
 	osgViewer::Viewer viewer;
 	osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
-	traits->x = 40;
+	traits->x = 1920 + 40;
 	traits->y = 40;
 	traits->width = 800;
 	traits->height = 600;
@@ -35,6 +35,7 @@ int main(int argc, char** argv)
 	osg::ref_ptr<osgFX::Scribe> sc = new osgFX::Scribe;
 	sc->addChild(cow);
 	root->addChild(sc);
+	root->addChild(cow);
 	viewer.setSceneData(root);
 	viewer.addEventHandler(new PickEventHnadler);
 	viewer.realize();

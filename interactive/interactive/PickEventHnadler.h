@@ -43,8 +43,23 @@ public:
 					osg::NodePath np = iter->nodePath;
 					for (int i = 0; i < np.size(); i++)
 					{
+						osgFX::Scribe *sc = dynamic_cast<osgFX::Scribe*>(np[i]);
+						if (sc)
+						{
+							if (sc->getNodeMask() != 0)
+							{
+								sc->setNodeMask(0);
+							}
+						}
+/*
 						osg::Node *node = dynamic_cast<osg::Node*>(np[i]);
-						node->setNodeMask(0);
+						if (node)
+						{
+							if (node->getNodeMask() != 0)
+							{
+								node->setNodeMask(0);
+							}
+						}*/
 					}
 				}
 			}
