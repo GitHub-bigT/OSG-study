@@ -108,7 +108,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(OSGDIR)/lib;</AdditionalLibraryDirectories>
-      <AdditionalDependencies>osgViewerd.lib;osgDBd.lib;osgd.lib;osgGAd.lib;osgManipulatord.lib;osgUtild.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>osgViewerd.lib;osgDBd.lib;osgd.lib;osgGAd.lib;osgFXd.lib;osgManipulatord.lib;osgUtild.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -149,6 +149,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="PickEventHnadler.h" />
     <ClInclude Include="UseEventHandle.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
