@@ -3,17 +3,14 @@
 
 #include <osgViewer/Viewer>
 #include <osgDB/ReadFile>
+#include "CSouth.h"
+/*
 #include <osgGA/KeySwitchMatrixManipulator>
 #include <osgGA/TrackballManipulator>
 #include <osgGA/DriveManipulator>
-#include <osgGA/TerrainManipulator>
-#include <osgDB/WriteFile>
-#include <osgDB/ReadFile>
-#include <osgDB/Registry>
+#include <osgGA/TerrainManipulator>*/
 
 std::string osgModelPath("..//..//..//OSGPractise//Resource//");
-
-//USE_OSGPLUGIN(ive)
 
 int main(int argc, char** argv)
 {
@@ -35,11 +32,14 @@ int main(int argc, char** argv)
 	camera->setDrawBuffer(buffer);
 	camera->setReadBuffer(buffer);*/
 	viewer.addSlave(camera);
+/*
 	osg::ref_ptr<osgGA::KeySwitchMatrixManipulator> ksmm = new osgGA::KeySwitchMatrixManipulator;
 	ksmm->addMatrixManipulator('1', "Trackball", new osgGA::TrackballManipulator);
 	ksmm->addMatrixManipulator('2', "Drive", new osgGA::DriveManipulator);
 	ksmm->addMatrixManipulator('3', "Terrain", new osgGA::TerrainManipulator);
-	viewer.setCameraManipulator(ksmm);
+	viewer.setCameraManipulator(ksmm);*/
+	viewer.setCameraManipulator(new CSouth());
+	
 
 	osg::ref_ptr<osg::Node> cow = osgDB::readNodeFile(osgModelPath + "ceep.ive");
 	//osg::ref_ptr<osg::Node> cow = osgDB::readNodeFile(osgModelPath + "morphtarget_shape1.osg");
