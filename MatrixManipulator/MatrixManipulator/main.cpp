@@ -32,17 +32,10 @@ int main(int argc, char** argv)
 	camera->setDrawBuffer(buffer);
 	camera->setReadBuffer(buffer);*/
 	viewer.addSlave(camera);
-/*
-	osg::ref_ptr<osgGA::KeySwitchMatrixManipulator> ksmm = new osgGA::KeySwitchMatrixManipulator;
-	ksmm->addMatrixManipulator('1', "Trackball", new osgGA::TrackballManipulator);
-	ksmm->addMatrixManipulator('2', "Drive", new osgGA::DriveManipulator);
-	ksmm->addMatrixManipulator('3', "Terrain", new osgGA::TerrainManipulator);
-	viewer.setCameraManipulator(ksmm);*/
 	viewer.setCameraManipulator(new CSouth());
-	
-
 	osg::ref_ptr<osg::Node> cow = osgDB::readNodeFile(osgModelPath + "ceep.ive");
-	//osg::ref_ptr<osg::Node> cow = osgDB::readNodeFile(osgModelPath + "morphtarget_shape1.osg");
+	//osg::ref_ptr<osg::Node> cow = osgDB::readNodeFile(osgModelPath + "cow.osgt");
+	viewer.setSceneData(cow);
 	viewer.setSceneData(cow);
 	viewer.realize();
 	viewer.run();

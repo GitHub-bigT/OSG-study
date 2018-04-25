@@ -1,6 +1,7 @@
 #pragma once
 #include <osgGA/CameraManipulator>
 
+//OSG坐标系：X正方向向右，Y正方向朝里，Z正方向朝上
 //WASD，↑←→↓ 前进、左右、后退
 //HOME上移。END下移
 //+加速 -减速
@@ -8,7 +9,7 @@ class CSouth : public osgGA::CameraManipulator
 {
 public:
 	CSouth() : 
-		m_fMoveSpeed(1.5f),
+		m_fMoveSpeed(0.0f),
 		m_bLeftButtonDown(false),
 		m_fpushX(0),
 		m_fpushY(0),
