@@ -1,5 +1,6 @@
 #pragma once
 #include <osgGA/CameraManipulator>
+#include <osg/LineSegment>
 
 //OSG坐标系：X正方向向右，Y正方向朝里，Z正方向朝上
 //WASD，↑←→↓ 前进、左右、后退
@@ -14,7 +15,7 @@ public:
 		m_fpushX(0),
 		m_fpushY(0),
 		m_fAngle(0.025),
-		m_bCollision(false),
+		m_bCollision(true),
 		m_vPosition(osg::Vec3(0.0f, 0.0f, 5.0f)),
 		m_vRotation(osg::Vec3(osg::PI_2, 0.0f, 0.0f))
 	{
@@ -193,7 +194,9 @@ public:
 	{
 		if (m_bCollision)
 		{
-
+			osg::Vec3 newPos = m_vPosition + delta;
+			osgUtil::IntersectionVisitor;
+			//osg::ref_ptr<osg::LineSegment> 
 		}
 		else
 		{
