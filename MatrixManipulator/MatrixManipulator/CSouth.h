@@ -42,11 +42,12 @@ public:
 	virtual osg::Matrixd getMatrix() const 
 	{
 		osg::Matrixd mat;
-		mat.makeRotate	(	m_vRotation._v[0], osg::Vec3(1.0f, 0.0f, 0.0f),
+		/*mat.makeRotate	(	m_vRotation._v[0], osg::Vec3(1.0f, 0.0f, 0.0f),
 							m_vRotation._v[1], osg::Vec3(0.0f, 1.0f, 0.0f), 
 							m_vRotation._v[2], osg::Vec3(0.0f, 0.0f, 1.0f)
-						);
-		return mat * osg::Matrixd::translate(m_vPosition);
+						);*/
+		//return mat * osg::Matrixd::translate(m_vPosition);
+		return mat;
 	}
 
 	/** get the position of the manipulator as a inverse matrix of the manipulator, typically used as a model view matrix.*/
@@ -108,68 +109,33 @@ public:
 				}
 				return true;
 			}
-/*
 			if (ea.getKey() == 0xFF52 || ea.getKey() == 0x77 || ea.getKey() == 0x57)//↑ , small w, big W
 			{
 				printf(" ↑ \n");
-				changePosition(osg::Vec3(0, m_fMoveSpeed, 0));
-				//changePosition(osg::Vec3(m_fMoveSpeed, 0, 0));
-				//printf(" value = %f \n", sinf(osg::PI_2 + m_vRotation._v[2]));
+				changePosition(osg::Vec3(0, m_fMoveSpeed * sinf(osg::PI_2 + m_vRotation._v[2]), 0));
+				changePosition(osg::Vec3(m_fMoveSpeed * cosf(osg::PI_2 + m_vRotation._v[2]), 0, 0));
 				return true;
 			}
 			if (ea.getKey() == 0xFF54 || ea.getKey() == 0x73 || ea.getKey() == 0x53)//↓
 			{
 				printf(" ↓ \n");
-				changePosition(osg::Vec3(0, -m_fMoveSpeed, 0));
+				changePosition(osg::Vec3(0, -m_fMoveSpeed * sinf(osg::PI_2 + m_vRotation._v[2]), 0));
+				changePosition(osg::Vec3(-m_fMoveSpeed * cosf(osg::PI_2 + m_vRotation._v[2]), 0, 0));
 				return true;
 			}
 			if (ea.getKey() == 0xFF51 || ea.getKey() == 0x61 || ea.getKey() == 0x41)//↓
 			{
 				printf(" ← \n");
-				changePosition(osg::Vec3(-m_fMoveSpeed, 0, 0));
+				changePosition(osg::Vec3(0, m_fMoveSpeed * cosf(osg::PI_2 + m_vRotation._v[2]), 0));
+				changePosition(osg::Vec3(-m_fMoveSpeed * sinf(osg::PI_2 + m_vRotation._v[2]), 0, 0));
 				return true;
 			}
 			if (ea.getKey() == 0xFF53 || ea.getKey() == 0x64 || ea.getKey() == 0x44)//↓
 			{
 				printf(" → \n");
-				changePosition(osg::Vec3(m_fMoveSpeed, 0, 0));
-				return true;
-			}*/
-			//向前走，W键，或者UP键
-			if (ea.getKey() == 0xFF52 || ea.getKey() == 0x57 || ea.getKey() == 0x77)//up
-			{
-				changePosition(osg::Vec3(0, m_fMoveSpeed * sinf(osg::PI_2 + m_vRotation._v[2]), 0));
-				changePosition(osg::Vec3(m_fMoveSpeed * cosf(osg::PI_2 + m_vRotation._v[2]), 0, 0));
-				return true;
-			}
-			//向后退，S键，或者DOWN键
-			if (ea.getKey() == 0xFF54 || ea.getKey() == 0x53 || ea.getKey() == 0x73)//down
-			{
-				changePosition(osg::Vec3(0, -m_fMoveSpeed * sinf(osg::PI_2 + m_vRotation._v[2]), 0));
-				changePosition(osg::Vec3(-m_fMoveSpeed * cosf(osg::PI_2 + m_vRotation._v[2]), 0, 0));
-				return true;
-			}
-			//A
-			if (ea.getKey() == 0x41 || ea.getKey() == 0x61)
-			{
-				changePosition(osg::Vec3(0, m_fMoveSpeed * cosf(osg::PI_2 + m_vRotation._v[2]), 0));
-				changePosition(osg::Vec3(-m_fMoveSpeed * sinf(osg::PI_2 + m_vRotation._v[2]), 0, 0));
-				return true;
-			}
-			//D
-			if (ea.getKey() == 0x44 || ea.getKey() == 0x64)
-			{
 				changePosition(osg::Vec3(0, -m_fMoveSpeed * cosf(osg::PI_2 + m_vRotation._v[2]), 0));
 				changePosition(osg::Vec3(m_fMoveSpeed * sinf(osg::PI_2 + m_vRotation._v[2]), 0, 0));
 				return true;
-			}
-			if (ea.getKey() == 0xFF53)//Right
-			{
-				m_vRotation._v[2] -= osg::DegreesToRadians(m_fAngle);
-			}
-			if (ea.getKey() == 0xFF51)//Left
-			{
-				m_vRotation._v[2] += osg::DegreesToRadians(m_fAngle);
 			}
 			break;
 		case osgGA::GUIEventAdapter::PUSH://单击
@@ -181,16 +147,21 @@ public:
 			}
 			break;
 		case osgGA::GUIEventAdapter::DRAG:
-			printf("drag mouseX = %f, mouseY= %f\n", mouseX, mouseY);
 			if (m_bLeftButtonDown)
 			{
-				m_vRotation._v[2] -= osg::DegreesToRadians(m_fAngle * (mouseX - m_fpushX));
-				m_vRotation._v[0] += osg::DegreesToRadians(m_fAngle * (mouseY - m_fpushY));
+				m_vRotation._v[2] -= m_fAngle * osg::DegreesToRadians(mouseX - m_fpushX);//值增大，夹角变小
+				m_vRotation._v[0] += m_fAngle * osg::DegreesToRadians(mouseY - m_fpushY);//值增大，夹角变大
 				//防止背过去
 				if (m_vRotation._v[0] >= 3.14)
 					m_vRotation._v[0] = 3.14;
 				if (m_vRotation._v[0] <= 0)
 					m_vRotation._v[0] = 0;
+			}
+			break;
+		case osgGA::GUIEventAdapter::RELEASE:
+			if (ea.getButton() == osgGA::GUIEventAdapter::MouseButtonMask::LEFT_MOUSE_BUTTON)
+			{
+				m_bLeftButtonDown = false;
 			}
 			break;
 		default:
