@@ -9,11 +9,11 @@ class CSouth : public osgGA::CameraManipulator
 {
 public:
 	CSouth() : 
-		m_fMoveSpeed(0.0f),
+		m_fMoveSpeed(1.5f),
 		m_bLeftButtonDown(false),
 		m_fpushX(0),
 		m_fpushY(0),
-		m_fAngle(2.5),
+		m_fAngle(0.025),
 		m_bCollision(false),
 		m_vPosition(osg::Vec3(0.0f, 0.0f, 5.0f)),
 		m_vRotation(osg::Vec3(osg::PI_2, 0.0f, 0.0f))
@@ -67,41 +67,130 @@ public:
 		switch (ea.getEventType())
 		{
 		case osgGA::GUIEventAdapter::KEYDOWN:
+			printf("key = %x\n", ea.getKey());
 			if (ea.getKey() == 0x20)//blank
 			{
 				printf(" blank \n");
+				//重绘
+				us.requestRedraw();
+				us.requestContinuousUpdate(false);
+				return true;
 			}
 			if (ea.getKey() == 0xFF50)//home
 			{
 				printf(" home \n");
+				//向上移动
+				changePosition(osg::Vec3(0.0f, 0.0f, m_fMoveSpeed));
+				return true;
 			}
 			if (ea.getKey() == 0xFF57)//end
 			{
 				printf(" end \n");
+				//向上移动
+				changePosition(osg::Vec3(0.0f, 0.0f, -m_fMoveSpeed));
+				return true;
 			}
-			if (ea.getKey() == 0x2B)//+
+			if (ea.getKey() == 0xffab)//+
 			{
 				printf(" + \n");
+				//加速
+				m_fMoveSpeed += 1.0f;
+				return true;
 			}
-			if (ea.getKey() == 0x2D)//-
+			if (ea.getKey() == 0xffad)//-
 			{
 				printf(" - \n");
+				//减速
+				m_fMoveSpeed -= 1.0f;
+				if (m_fMoveSpeed < 1.0f)
+				{
+					m_fMoveSpeed = 1.0f;
+				}
+				return true;
 			}
-			if (ea.getKey() == 0xFF52)//↑ , small w, big W
+/*
+			if (ea.getKey() == 0xFF52 || ea.getKey() == 0x77 || ea.getKey() == 0x57)//↑ , small w, big W
 			{
 				printf(" ↑ \n");
+				changePosition(osg::Vec3(0, m_fMoveSpeed, 0));
+				//changePosition(osg::Vec3(m_fMoveSpeed, 0, 0));
+				//printf(" value = %f \n", sinf(osg::PI_2 + m_vRotation._v[2]));
+				return true;
 			}
-			if (ea.getKey() == 0x57)
+			if (ea.getKey() == 0xFF54 || ea.getKey() == 0x73 || ea.getKey() == 0x53)//↓
 			{
-				printf(" big W \n");
+				printf(" ↓ \n");
+				changePosition(osg::Vec3(0, -m_fMoveSpeed, 0));
+				return true;
 			}
-			if (ea.getKey() == 0x77)
+			if (ea.getKey() == 0xFF51 || ea.getKey() == 0x61 || ea.getKey() == 0x41)//↓
 			{
-				printf(" small w \n");
+				printf(" ← \n");
+				changePosition(osg::Vec3(-m_fMoveSpeed, 0, 0));
+				return true;
 			}
-			if (ea.getKey() == 0xFF54 || ea.getKey() == 0x53 || ea.getKey() == 0x73)//s,↓
+			if (ea.getKey() == 0xFF53 || ea.getKey() == 0x64 || ea.getKey() == 0x44)//↓
 			{
-				printf(" s,↓ \n");
+				printf(" → \n");
+				changePosition(osg::Vec3(m_fMoveSpeed, 0, 0));
+				return true;
+			}*/
+			//向前走，W键，或者UP键
+			if (ea.getKey() == 0xFF52 || ea.getKey() == 0x57 || ea.getKey() == 0x77)//up
+			{
+				changePosition(osg::Vec3(0, m_fMoveSpeed * sinf(osg::PI_2 + m_vRotation._v[2]), 0));
+				changePosition(osg::Vec3(m_fMoveSpeed * cosf(osg::PI_2 + m_vRotation._v[2]), 0, 0));
+				return true;
+			}
+			//向后退，S键，或者DOWN键
+			if (ea.getKey() == 0xFF54 || ea.getKey() == 0x53 || ea.getKey() == 0x73)//down
+			{
+				changePosition(osg::Vec3(0, -m_fMoveSpeed * sinf(osg::PI_2 + m_vRotation._v[2]), 0));
+				changePosition(osg::Vec3(-m_fMoveSpeed * cosf(osg::PI_2 + m_vRotation._v[2]), 0, 0));
+				return true;
+			}
+			//A
+			if (ea.getKey() == 0x41 || ea.getKey() == 0x61)
+			{
+				changePosition(osg::Vec3(0, m_fMoveSpeed * cosf(osg::PI_2 + m_vRotation._v[2]), 0));
+				changePosition(osg::Vec3(-m_fMoveSpeed * sinf(osg::PI_2 + m_vRotation._v[2]), 0, 0));
+				return true;
+			}
+			//D
+			if (ea.getKey() == 0x44 || ea.getKey() == 0x64)
+			{
+				changePosition(osg::Vec3(0, -m_fMoveSpeed * cosf(osg::PI_2 + m_vRotation._v[2]), 0));
+				changePosition(osg::Vec3(m_fMoveSpeed * sinf(osg::PI_2 + m_vRotation._v[2]), 0, 0));
+				return true;
+			}
+			if (ea.getKey() == 0xFF53)//Right
+			{
+				m_vRotation._v[2] -= osg::DegreesToRadians(m_fAngle);
+			}
+			if (ea.getKey() == 0xFF51)//Left
+			{
+				m_vRotation._v[2] += osg::DegreesToRadians(m_fAngle);
+			}
+			break;
+		case osgGA::GUIEventAdapter::PUSH://单击
+			if (ea.getButton() == 1)
+			{
+				m_fpushX = mouseX;
+				m_fpushY = mouseY;
+				m_bLeftButtonDown = true;
+			}
+			break;
+		case osgGA::GUIEventAdapter::DRAG:
+			printf("drag mouseX = %f, mouseY= %f\n", mouseX, mouseY);
+			if (m_bLeftButtonDown)
+			{
+				m_vRotation._v[2] -= osg::DegreesToRadians(m_fAngle * (mouseX - m_fpushX));
+				m_vRotation._v[0] += osg::DegreesToRadians(m_fAngle * (mouseY - m_fpushY));
+				//防止背过去
+				if (m_vRotation._v[0] >= 3.14)
+					m_vRotation._v[0] = 3.14;
+				if (m_vRotation._v[0] <= 0)
+					m_vRotation._v[0] = 0;
 			}
 			break;
 		default:
@@ -131,7 +220,14 @@ public:
 
 	void changePosition(osg::Vec3 &delta)
 	{
-	
+		if (m_bCollision)
+		{
+
+		}
+		else
+		{
+			m_vPosition += delta;
+		}
 	}
 
 	float getSpeed()
