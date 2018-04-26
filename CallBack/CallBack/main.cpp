@@ -1,5 +1,7 @@
 #include <string>
 #include <windows.h>
+#include <fstream>
+#include <iostream>
 
 #include <osgViewer/Viewer>
 #include <osgDB/ReadFile>
@@ -10,8 +12,10 @@
 #include <osg/MatrixTransform>
 
 #include "CustomCallback.h"
+#include "VertexExtractor.h"
 
 std::string osgModelPath("..//..//..//OSGPractise//Resource//");
+std::string outVerDirPath("..//..//..//OSGPractise//CallBack//");
 
 enum CALLBACK_TYPE_S
 {
@@ -112,8 +116,21 @@ int main(int argc, char** argv)
 {
 	osgViewer::Viewer viewer;
 	setupWindow(viewer);
-	osg::Node *root = createModel();
-	viewer.setSceneData(root);
+	//osg::Node *root = createModel();
+	//viewer.setSceneData(root);
+	osg::Node *glider = osgDB::readNodeFile(osgModelPath + "glider.osgt");
+	VertexExtractor ve;
+	glider->accept(ve);
+	std::ofstream out(outVerDirPath + "ver.txt");
+	std::vector<osg::Vec3>::iterator iter = ve.extracted_vert->begin();
+	for (int i = 0; i < ve.extracted_vert->size(); i++)
+	{
+		out << " x:" << iter->x() << " y:" << iter->y() << " z:" << iter->z() << std::endl;
+		iter++;
+	}
+	std::cout << "end" << std::endl;
+
+	viewer.setSceneData(glider);
 	viewer.realize();
 	viewer.run();
 	return 1;
