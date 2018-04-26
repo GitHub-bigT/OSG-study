@@ -70,10 +70,10 @@ public:
 		switch (ea.getEventType())
 		{
 		case osgGA::GUIEventAdapter::KEYDOWN:
-			printf("key = %x\n", ea.getKey());
+			//printf("key = %x\n", ea.getKey());
 			if (ea.getKey() == 0x20)//blank
 			{
-				printf(" blank \n");
+				//printf(" blank \n");
 				//重绘
 				us.requestRedraw();
 				us.requestContinuousUpdate(false);
@@ -81,28 +81,28 @@ public:
 			}
 			if (ea.getKey() == 0xFF50)//home
 			{
-				printf(" home \n");
+				//printf(" home \n");
 				//向上移动
 				changePosition(osg::Vec3(0.0f, 0.0f, m_fMoveSpeed));
 				return true;
 			}
 			if (ea.getKey() == 0xFF57)//end
 			{
-				printf(" end \n");
+				//printf(" end \n");
 				//向上移动
 				changePosition(osg::Vec3(0.0f, 0.0f, -m_fMoveSpeed));
 				return true;
 			}
 			if (ea.getKey() == 0xffab)//+
 			{
-				printf(" + \n");
+				//printf(" + \n");
 				//加速
 				m_fMoveSpeed += 1.0f;
 				return true;
 			}
 			if (ea.getKey() == 0xffad)//-
 			{
-				printf(" - \n");
+				//printf(" - \n");
 				//减速
 				m_fMoveSpeed -= 1.0f;
 				if (m_fMoveSpeed < 1.0f)
@@ -113,28 +113,28 @@ public:
 			}
 			if (ea.getKey() == 0xFF52 || ea.getKey() == 0x77 || ea.getKey() == 0x57)//↑ , small w, big W
 			{
-				printf(" ↑ \n");
+				//printf(" ↑ \n");
 				changePosition(osg::Vec3(0, m_fMoveSpeed * sinf(osg::PI_2 + m_vRotation._v[2]), 0));
 				changePosition(osg::Vec3(m_fMoveSpeed * cosf(osg::PI_2 + m_vRotation._v[2]), 0, 0));
 				return true;
 			}
 			if (ea.getKey() == 0xFF54 || ea.getKey() == 0x73 || ea.getKey() == 0x53)//↓
 			{
-				printf(" ↓ \n");
+				//printf(" ↓ \n");
 				changePosition(osg::Vec3(0, -m_fMoveSpeed * sinf(osg::PI_2 + m_vRotation._v[2]), 0));
 				changePosition(osg::Vec3(-m_fMoveSpeed * cosf(osg::PI_2 + m_vRotation._v[2]), 0, 0));
 				return true;
 			}
 			if (ea.getKey() == 0xFF51 || ea.getKey() == 0x61 || ea.getKey() == 0x41)//↓
 			{
-				printf(" ← \n");
+				//printf(" ← \n");
 				changePosition(osg::Vec3(0, m_fMoveSpeed * cosf(osg::PI_2 + m_vRotation._v[2]), 0));
 				changePosition(osg::Vec3(-m_fMoveSpeed * sinf(osg::PI_2 + m_vRotation._v[2]), 0, 0));
 				return true;
 			}
 			if (ea.getKey() == 0xFF53 || ea.getKey() == 0x64 || ea.getKey() == 0x44)//↓
 			{
-				printf(" → \n");
+				//printf(" → \n");
 				changePosition(osg::Vec3(0, -m_fMoveSpeed * cosf(osg::PI_2 + m_vRotation._v[2]), 0));
 				changePosition(osg::Vec3(m_fMoveSpeed * sinf(osg::PI_2 + m_vRotation._v[2]), 0, 0));
 				return true;
@@ -196,6 +196,8 @@ public:
 		if (m_bCollision)
 		{
 			osg::Vec3 newPos = m_vPosition + delta;
+/*
+			//deprecate
 			osgUtil::IntersectVisitor iv;
 			osg::ref_ptr<osg::LineSegment> line = new osg::LineSegment(newPos, m_vPosition);
 			iv.addLineSegment(line);
@@ -207,7 +209,15 @@ public:
 			else
 			{
 				printf("collision\n");
-			}
+			}*/
+			osg::ref_ptr<osgUtil::LineSegmentIntersector> li = new osgUtil::LineSegmentIntersector(newPos, m_vPosition);
+			osgUtil::IntersectionVisitor iv(li);
+			m_node->accept(iv);
+			osgUtil::LineSegmentIntersector::Intersections intersections = li->getIntersections();
+			if (intersections.size() == 0)
+				m_vPosition += delta;
+			else
+				printf("collision\n");
 		}
 		else
 		{
