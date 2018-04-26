@@ -15,8 +15,8 @@ public:
 			double time = nv->getFrameStamp()->getReferenceTime();
 			transform->setMatrix(osg::Matrix::translate(0.0f, cosf(time * angleVelocity), 0.0f));
 		}
-		//向下遍历node，以便找到transform
-		//traverse(node, nv);
+		//向下遍历结点，系统一般都调用此函数。否则只遍历一层 
+		traverse(node, nv);
 	}
 
 private:
