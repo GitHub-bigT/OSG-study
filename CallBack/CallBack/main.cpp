@@ -9,9 +9,17 @@
 #include <osg/PositionAttitudeTransform>
 #include <osg/MatrixTransform>
 
+#include "CustomCallback.h"
+
 std::string osgModelPath("..//..//..//OSGPractise//Resource//");
 
-osg::AnimationPath* createAnimationPath(const osg::Vec3 &center, float radius, double loopTime)
+enum CALLBACK_TYPE_S
+{
+	CUSTOM_CALLBACK = 0,
+	ANIMATION_PATH_CALLBACK = 1
+};
+
+osg::AnimationPath* createAnimationPath()
 {
 	osg::AnimationPath *ap = new osg::AnimationPath;
 	ap->setLoopMode(osg::AnimationPath::LOOP);
@@ -21,12 +29,13 @@ osg::AnimationPath* createAnimationPath(const osg::Vec3 &center, float radius, d
 	float yaw_delta = 2.0f * osg::PI / ((float)numSamples - 1.0f);//将360度平分(弧度)
 	float roll = osg::inDegrees(30.0f);
 	//设置时间间隔
+	int totalTime = 10.0f;
 	double time = 0.0f;
-	double time_delta = loopTime / numSamples;
+	double time_delta = totalTime / numSamples;
 	for (int i =0; i < numSamples; ++i)
 	{
 		osg::Vec3 position(0, 0, 0);
-		osg::Quat rotation(osg::Quat(roll, osg::Vec3(0.0, 1.0, 0.0)) * osg::Quat(-yaw, osg::Vec3(0.0, 0.0, 1.0)));
+		osg::Quat rotation(osg::Quat(roll, osg::Vec3(0.0, 1.0, 0.0)) * osg::Quat(-yaw, osg::Vec3(0.0, 0.0, 1.0)));//顺时针
 		ap->insert(time, osg::AnimationPath::ControlPoint(position, rotation));
 		yaw += yaw_delta;
 		time += time_delta;
@@ -37,18 +46,32 @@ osg::AnimationPath* createAnimationPath(const osg::Vec3 &center, float radius, d
 	return ap;
 }
 
-osg::Node* createMovingModel(osg::Vec3 &center, float &raidus)
+osg::Node* createMovingModel(CALLBACK_TYPE_S type)
 {
-	float animationLength = 10.0f;
-	osg::AnimationPath *ap = createAnimationPath(center, raidus, animationLength);
 	osg::Group *model = new osg::Group;
-	osg::ref_ptr<osg::Node> fountain = osgDB::readNodeFile(osgModelPath + "fountain.osgt");
+	//osg::ref_ptr<osg::Node> fountain = osgDB::readNodeFile(osgModelPath + "fountain.osgt");
+	osg::ref_ptr<osg::Node> fountain = osgDB::readNodeFile(osgModelPath + "glider.osgt");
 	if (fountain)
 	{
-		fountain->asGroup()->getChild(0)->setNodeMask(0);
+		//fountain->asGroup()->getChild(0)->setNodeMask(0);
 		osg::MatrixTransform *xform = new osg::MatrixTransform;
 		//设置更新回调
-		xform->setUpdateCallback(new osg::AnimationPathCallback(ap));
+		switch (type)
+		{
+		case CUSTOM_CALLBACK:
+		{
+			xform->setUpdateCallback(new CustomCallback());
+			break;
+		}
+		case ANIMATION_PATH_CALLBACK:
+		{
+			osg::AnimationPath *ap = createAnimationPath();
+			xform->setUpdateCallback(new osg::AnimationPathCallback(ap));
+			break;
+		}
+		default:
+			break;
+		}
 		xform->addChild(fountain);
 		model->addChild(xform);
 	}
@@ -58,9 +81,8 @@ osg::Node* createMovingModel(osg::Vec3 &center, float &raidus)
 osg::Node* createModel()
 {
 	osg::Group *root = new osg::Group;
-	float radius = 1.0f;
-	osg::Vec3 center(0.0f, 0.0f, 0.0f);
-	root->addChild(createMovingModel(center, radius));
+	//root->addChild(createMovingModel(ANIMATION_PATH_CALLBACK));
+	root->addChild(createMovingModel(CUSTOM_CALLBACK));
 	//root->addChild(osgDB::readNodeFile(osgModelPath + "cow.osgt"));
 	return root;
 }
