@@ -15,6 +15,7 @@ std::string osgModelPath("..//..//..//OSGPractise//Resource//");
 int main(int argc, char** argv)
 {
 	osgViewer::Viewer viewer;
+	osg::ref_ptr<osg::Group> root = new osg::Group();
 	osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
 	traits->x = 1920 + 60;
 	traits->y = 60;
@@ -32,11 +33,14 @@ int main(int argc, char** argv)
 	camera->setDrawBuffer(buffer);
 	camera->setReadBuffer(buffer);*/
 	viewer.addSlave(camera);
-	viewer.setCameraManipulator(new CSouth());
-	osg::ref_ptr<osg::Node> cow = osgDB::readNodeFile(osgModelPath + "ceep.ive");
-	//osg::ref_ptr<osg::Node> cow = osgDB::readNodeFile(osgModelPath + "cow.osgt");
-	viewer.setSceneData(cow);
-	viewer.setSceneData(cow);
+	osg::ref_ptr<CSouth> cameraManipulator = new CSouth;
+	viewer.setCameraManipulator(cameraManipulator);
+	osg::ref_ptr<osg::Node> ceep = osgDB::readNodeFile(osgModelPath + "ceep.ive");
+	osg::ref_ptr<osg::Node> cow = osgDB::readNodeFile(osgModelPath + "cow.osgt");
+	root->addChild(ceep);
+	root->addChild(cow);
+	viewer.setSceneData(root);
+	cameraManipulator->setNode(cow);
 	viewer.realize();
 	viewer.run();
 	return -1;

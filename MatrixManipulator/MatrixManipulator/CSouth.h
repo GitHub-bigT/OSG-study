@@ -1,6 +1,7 @@
 #pragma once
 #include <osgGA/CameraManipulator>
 #include <osg/LineSegment>
+#include <osgUtil/IntersectVisitor>
 
 //OSG坐标系：X正方向向右，Y正方向朝里，Z正方向朝上
 //WASD，↑←→↓ 前进、左右、后退
@@ -171,9 +172,9 @@ public:
 		return false;
 	}
 
-	virtual void setNode(osg::Node*)
+	virtual void setNode(osg::Node* node)
 	{
-	
+		m_node = node;
 	}
 
 private:
@@ -195,8 +196,18 @@ public:
 		if (m_bCollision)
 		{
 			osg::Vec3 newPos = m_vPosition + delta;
-			osgUtil::IntersectionVisitor;
-			//osg::ref_ptr<osg::LineSegment> 
+			osgUtil::IntersectVisitor iv;
+			osg::ref_ptr<osg::LineSegment> line = new osg::LineSegment(newPos, m_vPosition);
+			iv.addLineSegment(line);
+			m_node->accept(iv);
+			if (!iv.hits())
+			{
+				m_vPosition += delta;
+			}
+			else
+			{
+				printf("collision\n");
+			}
 		}
 		else
 		{
