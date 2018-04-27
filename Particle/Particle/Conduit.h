@@ -82,6 +82,8 @@ public:
 		emitter->setPlacer(placer);
 		osgParticle::RadialShooter *shooter = new osgParticle::RadialShooter;
 		shooter->setInitialSpeedRange(m_fTheSpeech, 0);
+		shooter->setPhiRange(osgParticle::rangef(osg::DegreesToRadians(0.0), osg::DegreesToRadians(0.0)));
+		shooter->setThetaRange(osgParticle::rangef(osg::DegreesToRadians(60.0), osg::DegreesToRadians(120.0)));
 		emitter->setShooter(shooter);
 		root->addChild(emitter);
 
@@ -96,10 +98,13 @@ public:
 		//program->addOperator(fluid);
 		//root->addChild(program);
 
-		osg::Geode *geode = new osg::Geode;
-		geode->addDrawable(ps);
-
-		root->addChild(geode);
+		//osg::Geode *geode = new osg::Geode;
+		//geode->addDrawable(ps);
+/*
+		osg::MatrixTransform *rotate = new osg::MatrixTransform;
+		rotate->setMatrix(osg::Matrix::rotate(osg::DegreesToRadians(45.0f), 0.0f, 0.0f, 1.0f));
+		rotate->addChild(ps);*/
+		root->addChild(ps);
 		return ps;
 	}
 
