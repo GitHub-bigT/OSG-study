@@ -4,6 +4,7 @@
 #include <osgParticle/ParticleSystem>
 #include <osgParticle/ParticleSystemUpdater>
 #include <osgParticle/ModularEmitter>
+#include <osgParticle/ConstantRateCounter>
 
 #include <osgParticle/ModularProgram>
 #include <osgParticle/AccelOperator>
@@ -34,10 +35,9 @@ public:
 	{
 		osgParticle::Particle mTemplate;
 		mTemplate.setLifeTime(2);
-		mTemplate.setSizeRange(osgParticle::rangef(0.1f, 0.1f));
-		mTemplate.setAlphaRange(osgParticle::rangef(1.0f, 0.5f));
-		mTemplate.setColorRange(osgParticle::rangev4(osg::Vec4(0.7f, 1.0f, 1.0f, 1.5f), osg::Vec4(0.8f, 0.8f, 1.0f, 0.0f)));
-		mTemplate.setRadius(m_fTheSize);
+		mTemplate.setSizeRange(osgParticle::rangef(m_fTheSize, m_fTheSize));
+		mTemplate.setAlphaRange(osgParticle::rangef(1.0f, 0.0f));
+		mTemplate.setColorRange(osgParticle::rangev4(osg::Vec4(0.7f, 1.0f, 1.0f, 1.5f), osg::Vec4(0.8f, 0.8f, 1.0f, 1.0f)));
 		mTemplate.setMass(0.05f);
 		osgParticle::ParticleSystem *ps = new osgParticle::ParticleSystem;
 		ps->setDefaultAttributes(osgModelPath + "Images/smoke.rgb", false, false);
@@ -46,7 +46,7 @@ public:
 		osgParticle::ModularEmitter *emitter = new osgParticle::ModularEmitter;
 		emitter->setParticleSystem(ps);
 		osgParticle::RandomRateCounter *counter = new osgParticle::RandomRateCounter;
-		counter->setRateRange(m_fTheNum, m_fTheNum);
+		counter->setRateRange(0, m_fTheNum);
 		emitter->setCounter(counter);
 		osgParticle::PointPlacer *placer = new osgParticle::PointPlacer;
 		placer->setCenter(m_vecPosition);
@@ -64,7 +64,8 @@ public:
 		osgParticle::FluidFrictionOperator *fluid = new osgParticle::FluidFrictionOperator;
 		fluid->setFluidToAir();
 		program->addOperator(fluid);
-		root->addChild(program);
+		//root->addChild(program);
+
 		osg::Geode *geode = new osg::Geode;
 		geode->addDrawable(ps);
 		root->addChild(geode);

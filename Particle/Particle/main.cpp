@@ -49,6 +49,8 @@ int main(int argc, char** argv)
 	osg::ref_ptr<osg::Group> root = new osg::Group;
 	//snowParticle(root);
 	conduitParticle(root);
+	osg::ref_ptr<osg::Node> glider = osgDB::readNodeFile(osgModelPath + "glider.osgt");
+	//root->addChild(glider);
 	viewer.setSceneData(root);
 	viewer.realize();
 	viewer.run();
