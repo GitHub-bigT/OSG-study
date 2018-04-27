@@ -6,11 +6,10 @@
 #include <osgParticle/PrecipitationEffect>
 #include <osg/GraphicsContext>
 
-std::string osgModelPath("..//..//..//OSGPractise//Resource//");
+#include "Conduit.h"
 
-int main(int argc, char** argv)
+void setupWindow(osgViewer::Viewer &viewer)
 {
-	osgViewer::Viewer viewer;
 	osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
 	traits->x = 1920 + 60;
 	traits->y = 60;
@@ -24,8 +23,10 @@ int main(int argc, char** argv)
 	camera->setGraphicsContext(gc);
 	camera->setViewport(new osg::Viewport(0, 0, traits->width, traits->height));
 	viewer.addSlave(camera);
+}
 
-	osg::ref_ptr<osg::Group> root = new osg::Group;
+void snowParticle(osg::Group *root)
+{
 	osg::ref_ptr<osg::Node> cow = osgDB::readNodeFile(osgModelPath + "cow.osgt");
 	root->addChild(cow);
 	osg::ref_ptr<osgParticle::PrecipitationEffect> pEffect = new osgParticle::PrecipitationEffect;
@@ -33,6 +34,21 @@ int main(int argc, char** argv)
 	pEffect->setParticleColor(osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	pEffect->setWind(osg::Vec3(0.005f, 0.0f, 0.0f));
 	root->addChild(pEffect);
+}
+
+void conduitParticle(osg::Group *root)
+{
+	Conduit cuit;
+	root->addChild(cuit.createCondtuit(root));
+}
+
+int main(int argc, char** argv)
+{
+	osgViewer::Viewer viewer;
+	setupWindow(viewer);
+	osg::ref_ptr<osg::Group> root = new osg::Group;
+	//snowParticle(root);
+	conduitParticle(root);
 	viewer.setSceneData(root);
 	viewer.realize();
 	viewer.run();
