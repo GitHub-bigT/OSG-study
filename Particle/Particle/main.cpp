@@ -39,7 +39,12 @@ void snowParticle(osg::Group *root)
 void conduitParticle(osg::Group *root)
 {
 	Conduit cuit;
-	root->addChild(cuit.createCondtuit(root));
+	osg::ref_ptr<osg::Node> cow = osgDB::readNodeFile(osgModelPath + "cow.osgt");
+	root->addChild(cow);
+	root->addChild(cuit.createCondtuit(root, osg::Vec3(-3.0f, 0.5f, -3.0f)));
+	root->addChild(cuit.createCondtuit(root, osg::Vec3(2.2f, 0.5f, -3.0f)));
+	root->addChild(cuit.createCondtuit(root, osg::Vec3(-3.0f, -1.4f, -3.0f)));
+	root->addChild(cuit.createCondtuit(root, osg::Vec3(2.2f, -1.4f, -3.0f)));
 }
 
 int main(int argc, char** argv)
@@ -49,8 +54,7 @@ int main(int argc, char** argv)
 	osg::ref_ptr<osg::Group> root = new osg::Group;
 	//snowParticle(root);
 	conduitParticle(root);
-	osg::ref_ptr<osg::Node> glider = osgDB::readNodeFile(osgModelPath + "glider.osgt");
-	//root->addChild(glider);
+	
 	viewer.setSceneData(root);
 	viewer.realize();
 	viewer.run();

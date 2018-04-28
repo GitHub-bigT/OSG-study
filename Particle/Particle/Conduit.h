@@ -24,7 +24,7 @@ class Conduit
 {
 public:
 	Conduit()
-		:m_fTheNum(800), m_fTheSize(0.2), m_fTheSpeech(100), m_vecPosition(0, 0, 0)
+		:m_fTheNum(100), m_fTheSize(0.6), m_fTheSpeech(-5)
 	{
 		
 	}
@@ -42,11 +42,11 @@ public:
 	osgParticle::ParticleSystem* createConduitScene(osg::Group *root)
 	{
 		osgParticle::Particle mTemplate;
-		mTemplate.setLifeTime(2);
+		mTemplate.setLifeTime(0.3);
 		mTemplate.setSizeRange(osgParticle::rangef(m_fTheSize, m_fTheSize));
-		mTemplate.setAlphaRange(osgParticle::rangef(1.0f, 1.0f));
+		mTemplate.setAlphaRange(osgParticle::rangef(1.0f, 0.0f));
 		//mTemplate.setColorRange(osgParticle::rangev4(osg::Vec4(0.7f, 1.0f, 1.0f, 1.5f), osg::Vec4(0.8f, 0.8f, 1.0f, 1.0f)));
-		mTemplate.setColorRange(osgParticle::rangev4(osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f), osg::Vec4(0.0f, 0.0f, 0.0f, 1.0f)));
+		mTemplate.setColorRange(osgParticle::rangev4(osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f), osg::Vec4(1.0f, 1.0f, 0.0f, 1.0f)));
 		//mTemplate.setMass(55.05f);
 		osgParticle::ParticleSystem *ps = new osgParticle::ParticleSystem;
 		ps->setDefaultAttributes(osgModelPath + "Images/smoke.rgb", false, false);
@@ -66,7 +66,7 @@ public:
 		placer->setCenter(m_vecPosition);
 /*
 		osgParticle::SegmentPlacer *placer = new osgParticle::SegmentPlacer;
-		placer->setSegment(osg::Vec3(-10.0f, 0.0f, -10.0f), osg::Vec3(10.0f, 0.0f, -10.0f));*/
+		placer->setSegment(osg::Vec3(-25.0f, 0.0f, 25.0f), osg::Vec3(20.0f, 0.0f, 25.0f));*/
 /*
 		osgParticle::MultiSegmentPlacer *placer = new osgParticle::MultiSegmentPlacer;
 		osg::Vec3 mVertexs[4] = {	osg::Vec3(-10.0f, 0.0f, -10.0f),
@@ -82,8 +82,8 @@ public:
 		emitter->setPlacer(placer);
 		osgParticle::RadialShooter *shooter = new osgParticle::RadialShooter;
 		shooter->setInitialSpeedRange(m_fTheSpeech, 0);
-		shooter->setPhiRange(osgParticle::rangef(osg::DegreesToRadians(0.0), osg::DegreesToRadians(0.0)));
-		shooter->setThetaRange(osgParticle::rangef(osg::DegreesToRadians(60.0), osg::DegreesToRadians(120.0)));
+		//shooter->setPhiRange(osgParticle::rangef(osg::DegreesToRadians(0.0), osg::DegreesToRadians(0.0)));
+		//shooter->setThetaRange(osgParticle::rangef(osg::DegreesToRadians(60.0), osg::DegreesToRadians(120.0)));
 		emitter->setShooter(shooter);
 		root->addChild(emitter);
 
@@ -108,8 +108,9 @@ public:
 		return ps;
 	}
 
-	osg::Node *createCondtuit(osg::Group *root)
+	osg::Node *createCondtuit(osg::Group *root, osg::Vec3 pos)
 	{
+		m_vecPosition = pos;
 		osgParticle::ParticleSystem *ps = createConduitScene(root);
 		osgParticle::ParticleSystemUpdater *psu = new osgParticle::ParticleSystemUpdater;
 		psu->addParticleSystem(ps);
