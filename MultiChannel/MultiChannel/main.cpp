@@ -52,7 +52,7 @@ void multiWindow(osgViewer::Viewer &viewer)
 
 	for (int i = 0; i < numWindow; i++)
 	{
-		translatOffset -= 2.0f;
+		translatOffset -= 1.0f;
 		osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
 		//traits->screenNum = 0;
 		traits->x = traits->x = 1920 + (i * width) / numWindow;
