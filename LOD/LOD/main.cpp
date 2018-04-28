@@ -3,7 +3,9 @@
 
 #include <osgViewer/Viewer>
 #include <osgDB/ReadFile>
+#include <osgDB/WriteFile>
 #include <osg/Matrixd>
+#include <osg/LOD>
 
 const std::string osgModelPath("..//..//..//OSGPractise//Resource//");
 
@@ -33,8 +35,17 @@ int main(int argc, char** argv)
 	osgViewer::Viewer viewer;
 	setupWindow(viewer);
 	osg::ref_ptr<osg::Group> root = new osg::Group;
-	osg::ref_ptr<osg::Node> cow = osgDB::readNodeFile(osgModelPath + "cow.osgt");
-	root->addChild(cow);
+
+/*
+	osg::ref_ptr<osg::Node> fountain = osgDB::readNodeFile(osgModelPath + "fountain.osgt");
+	fountain->asGroup()->getChild(0)->setNodeMask(0);
+	osg::LOD *lod = new osg::LOD;
+	lod->addChild(fountain, 0, 3000);
+	osgDB::writeNodeFile(*fountain, "test.osgt", osgDB::Registry::instance()->getOptions());*/
+	
+	osg::ref_ptr<osg::Node> fountain = osgDB::readNodeFile("test.osgt");
+
+	root->addChild(fountain);
 	viewer.setSceneData(root);
 	viewer.realize();
 	viewer.run();
