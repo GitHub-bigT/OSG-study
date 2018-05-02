@@ -108,7 +108,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(OSGDIR)\lib;</AdditionalLibraryDirectories>
-      <AdditionalDependencies>osgViewerd.lib;osgDBd.lib;osgd.lib;osgGAd.lib;osgFXd.lib;osgManipulatord.lib;osgUtild.lib;opengl32.lib;osgdb_ived.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>osgViewerd.lib;osgDBd.lib;osgd.lib;osgGAd.lib;osgFXd.lib;osgManipulatord.lib;osgUtild.lib;opengl32.lib;osgdb_ived.lib;osgTextd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
