@@ -86,6 +86,8 @@ class OSG_EXPORT Program : public osg::StateAttribute
           * Mark Program as needing relink.  Return true for success */
         bool addShader( Shader* shader );
 
+        template<class T> bool addShader( const ref_ptr<T>& shader ) { return addShader(shader.get()); }
+
         unsigned int getNumShaders() const { return static_cast<unsigned int>(_shaderList.size()); }
 
         Shader* getShader( unsigned int i ) { return _shaderList[i].get(); }
@@ -95,13 +97,11 @@ class OSG_EXPORT Program : public osg::StateAttribute
           * Mark Program as needing relink.  Return true for success */
         bool removeShader( Shader* shader );
 
+        template<class T> bool removeShader( const ref_ptr<T>& shader ) { return removeShader(shader.get()); }
+
         /** Set/get GL program parameters */
         void setParameter( GLenum pname, GLint value );
         GLint getParameter( GLenum pname ) const;
-
-        /** Set/get compute shader work groups */
-        void setComputeGroups( GLint numGroupsX, GLint numGroupsY, GLint numGroupsZ );
-        void getComputeGroups( GLint& numGroupsX, GLint& numGroupsY, GLint& numGroupsZ ) const;
 
         /** Add an attribute location binding. */
         void addBindAttribLocation( const std::string& name, GLuint index );
@@ -152,9 +152,9 @@ class OSG_EXPORT Program : public osg::StateAttribute
         GLenum getTransformFeedBackMode() const {return _feedbackmode;}
 
         /** Experimental. */
-        void setShaderDefines(const ShaderDefines& shaderDefs) { _shaderDefines = shaderDefs; }
-        ShaderDefines& getShaderDefines() { return _shaderDefines; }
-        const ShaderDefines& getShaderDefines() const { return _shaderDefines; }
+        void setShaderPragmas(const ShaderPragmas& shaderPragmas) { _shaderPragmas = shaderPragmas; }
+        ShaderPragmas& getShaderPragmas() { return _shaderPragmas; }
+        const ShaderPragmas& getShaderPragmas() const { return _shaderPragmas; }
 
 
 
@@ -176,7 +176,7 @@ class OSG_EXPORT Program : public osg::StateAttribute
 
                 META_Object(osg, ProgramBinary);
 
-                /** Allocated a data buffer of specified size/*/
+                /** Allocated a data buffer of specified size.*/
                 void allocate(unsigned int size);
 
                 /** Assign program binary data, copying the specified data into locally stored data buffer, the original data can then be deleted.*/
@@ -227,21 +227,6 @@ class OSG_EXPORT Program : public osg::StateAttribute
 
         /** Query InfoLog from a glProgram */
         bool getGlProgramInfoLog(unsigned int contextID, std::string& log) const;
-
-        /** Mark internal glProgram for deletion.
-          * Deletion requests are queued until they can be executed
-          * in the proper GL context. */
-        static void deleteGlProgram(unsigned int contextID, GLuint program);
-
-        /** flush all the cached glPrograms which need to be deleted
-          * in the OpenGL context related to contextID.*/
-        static void flushDeletedGlPrograms(unsigned int contextID,double currentTime, double& availableTime);
-
-        /** discard all the cached glPrograms which need to be deleted
-          * in the OpenGL context related to contextID.
-          * Note, unlike flush no OpenGL calls are made, instead the handles are all removed.
-          * this call is useful for when an OpenGL context has been destroyed. */
-        static void discardDeletedGlPrograms(unsigned int contextID);
 
         struct ActiveVarInfo {
             ActiveVarInfo() : _location(-1), _type(Uniform::UNDEFINED), _size(-1) {}
@@ -314,12 +299,12 @@ class OSG_EXPORT Program : public osg::StateAttribute
                 }
 
 
-                inline void apply(const Uniform& uniform) const
+                inline void apply(const UniformBase& uniform) const
                 {
                     GLint location = getUniformLocation(uniform.getNameID());
                     if (location>=0)
                     {
-                        const Uniform* lastAppliedUniform = _lastAppliedUniformList[location].first.get();
+                        const UniformBase* lastAppliedUniform = _lastAppliedUniformList[location].first.get();
                         if (lastAppliedUniform != &uniform)
                         {
                             // new attribute
@@ -395,7 +380,7 @@ class OSG_EXPORT Program : public osg::StateAttribute
                 ActiveVarInfoMap _attribInfoMap;
                 UniformBlockMap _uniformBlockMap;
 
-                typedef std::pair<osg::ref_ptr<const osg::Uniform>, unsigned int> UniformModifiedCountPair;
+                typedef std::pair<osg::ref_ptr<const osg::UniformBase>, unsigned int> UniformModifiedCountPair;
                 typedef std::map<unsigned int, UniformModifiedCountPair> LastAppliedUniformList;
                 mutable LastAppliedUniformList _lastAppliedUniformList;
 
@@ -409,7 +394,7 @@ class OSG_EXPORT Program : public osg::StateAttribute
                 PerContextProgram& operator=(const PerContextProgram&);        // disallowed
         };
 
-        struct OSG_EXPORT ProgramObjects : public osg::Referenced
+        struct OSG_EXPORT ProgramObjects : public osg::GraphicsObject
         {
             typedef std::vector< osg::ref_ptr<PerContextProgram> > PerContextPrograms;
 
@@ -450,17 +435,11 @@ class OSG_EXPORT Program : public osg::StateAttribute
         GLint _geometryInputType;
         GLint _geometryOutputType;
 
-
-        /** Parameter maintained with glDispatchCompute */
-        GLint _numGroupsX;
-        GLint _numGroupsY;
-        GLint _numGroupsZ;
-
         /**TransformFeedBack**/
         GLenum _feedbackmode;
         std::vector<std::string> _feedbackout;
 
-        ShaderDefines _shaderDefines;
+        ShaderPragmas _shaderPragmas;
 
 
     private:

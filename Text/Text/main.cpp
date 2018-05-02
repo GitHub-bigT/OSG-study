@@ -32,10 +32,9 @@ int main(int argc, char** argv)
 	osgViewer::Viewer viewer;
 	osg::ref_ptr<osg::Group> root = new osg::Group();
 	setupWindow(viewer);
-	osg::ref_ptr<osg::Node> cow = osgDB::readNodeFile(osgModelPath + "cow.osgt");
+	osg::ref_ptr<osg::Node> cow = osgDB::readNodeFile(osgModelPath + "ceep.ive");
 	root->addChild(cow);
 	viewer.setSceneData(root);
-
 	viewer.realize();
 	viewer.run();
 	return -1;

@@ -102,12 +102,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(OSGDIR)/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(OSGDIR)\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(OSGDIR)/lib;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OSGDIR)\lib;</AdditionalLibraryDirectories>
       <AdditionalDependencies>osgViewerd.lib;osgDBd.lib;osgd.lib;osgGAd.lib;osgFXd.lib;osgManipulatord.lib;osgUtild.lib;opengl32.lib;osgdb_ived.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
