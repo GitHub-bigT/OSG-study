@@ -28,10 +28,10 @@ osg::AnimationPath* createAnimationPath()
 	osg::AnimationPath *ap = new osg::AnimationPath;
 	ap->setLoopMode(osg::AnimationPath::LOOP);
 	//设置关键点数
-	int numSamples = 40;
+	float numSamples = 40.0f;
 	float yaw = 0.0f;
 	float yaw_delta = 2.0f * osg::PI / ((float)numSamples - 1.0f);//将360度平分(弧度)
-	float roll = osg::inDegrees(30.0f);
+	float roll = osg::inDegrees(0.0f);
 	//设置时间间隔
 	int totalTime = 10.0f;
 	double time = 0.0f;
@@ -39,22 +39,23 @@ osg::AnimationPath* createAnimationPath()
 	for (int i =0; i < numSamples; ++i)
 	{
 		osg::Vec3 position(0, 0, 0);
-		osg::Quat rotation(osg::Quat(roll, osg::Vec3(0.0, 1.0, 0.0)) * osg::Quat(-yaw, osg::Vec3(0.0, 0.0, 1.0)));//顺时针
+		osg::Quat rotation(osg::Quat(-yaw, osg::Vec3(0.0, 0.0, 1.0)));//顺时针
 		ap->insert(time, osg::AnimationPath::ControlPoint(position, rotation));
 		yaw += yaw_delta;
 		time += time_delta;
 	}
+
 /*
-	ap->insert(time, osg::AnimationPath::ControlPoint(osg::Vec3(0.0f, 0.0f, 0.0f)));
-	ap->insert(1.0f, osg::AnimationPath::ControlPoint(osg::Vec3(100.0f, 0.0f, 0.0f)));*/
+	ap->insert(0.0f, osg::AnimationPath::ControlPoint(osg::Vec3(0.0f, 0.0f, 0.0f)));
+	ap->insert(1.0f, osg::AnimationPath::ControlPoint(osg::Vec3(0.5f, 0.0f, 0.0f)));*/
 	return ap;
 }
 
 osg::Node* createMovingModel(CALLBACK_TYPE_S type)
 {
 	osg::Group *model = new osg::Group;
-	//osg::ref_ptr<osg::Node> fountain = osgDB::readNodeFile(osgModelPath + "fountain.osgt");
-	osg::ref_ptr<osg::Node> fountain = osgDB::readNodeFile(osgModelPath + "glider.osgt");
+	osg::ref_ptr<osg::Node> fountain = osgDB::readNodeFile(osgModelPath + "fountain.osgt");
+	//osg::ref_ptr<osg::Node> fountain = osgDB::readNodeFile(osgModelPath + "glider.osgt");
 	if (fountain)
 	{
 		//fountain->asGroup()->getChild(0)->setNodeMask(0);
@@ -85,8 +86,8 @@ osg::Node* createMovingModel(CALLBACK_TYPE_S type)
 osg::Node* createModel()
 {
 	osg::Group *root = new osg::Group;
-	//root->addChild(createMovingModel(ANIMATION_PATH_CALLBACK));
-	root->addChild(createMovingModel(CUSTOM_CALLBACK));
+	root->addChild(createMovingModel(ANIMATION_PATH_CALLBACK));
+	//root->addChild(createMovingModel(CUSTOM_CALLBACK));
 	//root->addChild(osgDB::readNodeFile(osgModelPath + "cow.osgt"));
 	return root;
 }
@@ -116,8 +117,11 @@ int main(int argc, char** argv)
 {
 	osgViewer::Viewer viewer;
 	setupWindow(viewer);
-	//osg::Node *root = createModel();
-	//viewer.setSceneData(root);
+
+	osg::Node *root = createModel();
+	viewer.setSceneData(root);
+
+/*
 	osg::Node *glider = osgDB::readNodeFile(osgModelPath + "glider.osgt");
 	VertexExtractor ve;
 	glider->accept(ve);
@@ -129,8 +133,8 @@ int main(int argc, char** argv)
 		iter++;
 	}
 	std::cout << "end" << std::endl;
+	viewer.setSceneData(glider);*/
 
-	viewer.setSceneData(glider);
 	viewer.realize();
 	viewer.run();
 	return 1;

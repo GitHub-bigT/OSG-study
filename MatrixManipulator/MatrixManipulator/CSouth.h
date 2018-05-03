@@ -1,7 +1,7 @@
 #pragma once
 #include <osgGA/CameraManipulator>
 #include <osg/LineSegment>
-#include <osgUtil/IntersectVisitor>
+#include <osgUtil/IntersectionVisitor>
 
 //OSG坐标系：X正方向向右，Y正方向朝里，Z正方向朝上
 //WASD，↑←→↓ 前进、左右、后退
