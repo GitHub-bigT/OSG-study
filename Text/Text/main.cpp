@@ -45,7 +45,7 @@ osg::Node* createHUD()
 	text->setCharacterSize(TEXT_HEIGHT);
 	text->setPosition(osg::Vec3(TEXT_POSITION_X, TEXT_POSITION_Y, 0.0f));
 	osg::Camera *camera = new osg::Camera;
-	camera->setProjectionMatrix(osg::Matrix::ortho2D(0, 800, 0, 600));
+	camera->setProjectionMatrix(osg::Matrix::ortho2D(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT));
 	camera->setViewMatrix(osg::Matrix::identity());
 	camera->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
 	camera->setClearMask(GL_DEPTH_BUFFER_BIT);
@@ -73,6 +73,7 @@ int main(int argc, char** argv)
 	osg::Timer_t start_frame_time = 0;
 	osg::Timer_t end_frame_time = 0;
 	int frameNum = 0;
+	float frameRate = 0.0f;
 	timer->setStartTick();
 
 	//viewer.realize();
@@ -83,11 +84,12 @@ int main(int argc, char** argv)
 		viewer.frame();
 
 		end_frame_time = timer->tick();
-		frameNum++;
+		frameRate = 1000 / timer->delta_m(start_frame_time, end_frame_time);
 		//std::cout << "frameNum = " << frameNum << ", "<< "当前帧速为: " << 1000 / timer->delta_m(start_frame_time, end_frame_time) << std::endl;
 		wchar_t tex[32];
-		swprintf(tex,L"frameNum:%d, 帧率:%f", frameNum, 1000 / timer->delta_m(start_frame_time, end_frame_time));
+		swprintf(tex,L"frameNum:%d, 帧率:%f", frameNum, frameRate);
 		text->setText(tex);
+		frameNum++;
 	}
 	return -1;
 }
