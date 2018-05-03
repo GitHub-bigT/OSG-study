@@ -5,16 +5,23 @@
 #include <osgDB/ReadFile>
 #include <osgText/Text>
 #include <osg/Camera>
+#include <osg/Timer>
+#include <osgGA/TrackballManipulator>
 
 std::string osgModelPath("../../../OSGPractise/Resource/");
+const int SCREEN_WIDTH		= 800;
+const int SCREEN_HEIGHT		= 600;
+const float TEXT_HEIGHT		= 15.0f;
+const float TEXT_POSITION_X = 10.0f;
+const float TEXT_POSITION_Y = SCREEN_HEIGHT - TEXT_HEIGHT;
 
 void setupWindow(osgViewer::Viewer &viewer)
 {
 	osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
 	traits->x = 1920 + 60;
 	traits->y = 60;
-	traits->width = 800;
-	traits->height = 600;
+	traits->width = SCREEN_WIDTH;
+	traits->height = SCREEN_HEIGHT;
 	traits->windowDecoration = true;
 	traits->doubleBuffer = true;
 	traits->sharedContext = 0;
@@ -29,12 +36,14 @@ void setupWindow(osgViewer::Viewer &viewer)
 	viewer.addSlave(camera);
 }
 
+osgText::Text *text = NULL;
 osg::Node* createHUD()
 {
-	osgText::Text *text = new osgText::Text;
-	text->setFont(osgModelPath + "fonts/times.ttf");
-	text->setText("aaAAbb");
-	text->setPosition(osg::Vec3(100.0f, 200.0f, 0.0f));
+	text = new osgText::Text;
+	text->setFont(osgModelPath + "fonts/NoName.ttf");
+	text->setText("");
+	text->setCharacterSize(TEXT_HEIGHT);
+	text->setPosition(osg::Vec3(TEXT_POSITION_X, TEXT_POSITION_Y, 0.0f));
 	osg::Camera *camera = new osg::Camera;
 	camera->setProjectionMatrix(osg::Matrix::ortho2D(0, 800, 0, 600));
 	camera->setViewMatrix(osg::Matrix::identity());
@@ -57,7 +66,28 @@ int main(int argc, char** argv)
 	osg::ref_ptr<osg::Node> cow = osgDB::readNodeFile(osgModelPath + "cow.osgt");
 	root->addChild(cow);
 	viewer.setSceneData(root);
-	viewer.realize();
-	viewer.run();
+	viewer.setCameraManipulator(new osgGA::TrackballManipulator);
+
+	// ***********************
+	osg::Timer *timer = new osg::Timer;
+	osg::Timer_t start_frame_time = 0;
+	osg::Timer_t end_frame_time = 0;
+	int frameNum = 0;
+	timer->setStartTick();
+
+	//viewer.realize();
+	while (!viewer.done())
+	{
+		start_frame_time = timer->tick();
+
+		viewer.frame();
+
+		end_frame_time = timer->tick();
+		frameNum++;
+		//std::cout << "frameNum = " << frameNum << ", "<< "当前帧速为: " << 1000 / timer->delta_m(start_frame_time, end_frame_time) << std::endl;
+		wchar_t tex[32];
+		swprintf(tex,L"frameNum:%d, 帧率:%f", frameNum, 1000 / timer->delta_m(start_frame_time, end_frame_time));
+		text->setText(tex);
+	}
 	return -1;
 }
