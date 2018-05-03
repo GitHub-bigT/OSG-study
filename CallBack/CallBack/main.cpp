@@ -28,14 +28,14 @@ osg::AnimationPath* createAnimationPath()
 	osg::AnimationPath *ap = new osg::AnimationPath;
 	ap->setLoopMode(osg::AnimationPath::LOOP);
 	//设置关键点数
-	float numSamples = 40.0f;
+	int numSamples = 40;
 	float yaw = 0.0f;
 	float yaw_delta = 2.0f * osg::PI / ((float)numSamples - 1.0f);//将360度平分(弧度)
 	float roll = osg::inDegrees(0.0f);
 	//设置时间间隔
-	int totalTime = 10.0f;
-	double time = 0.0f;
-	double time_delta = totalTime / numSamples;
+	float totalTime = 10.0f;
+	float time = 0.0f;
+	float time_delta = totalTime / numSamples;
 	for (int i =0; i < numSamples; ++i)
 	{
 		osg::Vec3 position(0, 0, 0);
@@ -46,7 +46,7 @@ osg::AnimationPath* createAnimationPath()
 	}
 
 /*
-	ap->insert(0.0f, osg::AnimationPath::ControlPoint(osg::Vec3(0.0f, 0.0f, 0.0f)));
+	ap->insert(time, osg::AnimationPath::ControlPoint(osg::Vec3(0.0f, 0.0f, 0.0f)));
 	ap->insert(1.0f, osg::AnimationPath::ControlPoint(osg::Vec3(0.5f, 0.0f, 0.0f)));*/
 	return ap;
 }
